@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.game.back_end.controller.dto.PlayDTO;
 import com.game.back_end.controller.dto.PlayersDTO;
 import com.game.back_end.domain.Game;
 import com.game.back_end.domain.Player;
+import com.game.back_end.domain.WinChecker;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,9 +22,9 @@ public class PlayerController {
     private final Game game;
 
     @PostMapping("/define")
-    public ResponseEntity<String> defineNamePlayers(@RequestBody PlayersDTO playersDTO) {
-        Player p1 = new Player('X', playersDTO.nameP1());
-        Player p2 = new Player('O', playersDTO.nameP2());
+    public ResponseEntity<String> defineNamePlayers(@RequestBody PlayersDTO dto) {
+        Player p1 = new Player('X', dto.nameP1());
+        Player p2 = new Player('O', dto.nameP2());
         game.setPlayer1(p1);
         game.setPlayer2(p2);
 
@@ -38,5 +40,14 @@ public class PlayerController {
             );
         }
         return ResponseEntity.ok("Jogadores não definidos ainda...");
+    }
+    
+@PostMapping("play")
+    public ResponseEntity<String> postMethodName(@RequestBody PlayDTO dto) {
+        game.play(dto.symbol(), dto.position());
+        if (WinChecker.hasWinner(game.getBoard(), dto.symbol())) {
+            return ResponseEntity.ok("Você ganhou!!");
+        }
+        return ResponseEntity.ok("Jogada realizada!");
     }
 }

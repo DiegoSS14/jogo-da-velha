@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
+import com.game.back_end.exception.BusinessException;
+
 import lombok.Getter;
 
 @Getter
@@ -31,8 +33,8 @@ public class Board {
 
     public void reset() {
         cells = new char[3][3];
-        for(int linha = 0; linha < 3; linha++) {
-            for(int coluna = 0; coluna < 3; coluna++){
+        for (int linha = 0; linha < 3; linha++) {
+            for (int coluna = 0; coluna < 3; coluna++) {
                 cells[linha][coluna] = '-';
             }
         }
@@ -46,18 +48,27 @@ public class Board {
         String table = "";
 
         for (char[] board : cells) {
-            for(int i = 0; i < 3; i++) {
+            for (int i = 0; i < 3; i++) {
                 table += (" " + board[i] + " ");
             }
-            table+="\n";
+            table += "\n";
         }
 
         return table;
     }
 
     public void placeMark(String position, char symbol) {
+        if (isMark(position)) {
+            throw new BusinessException("Posição já ocupada");
+        }
         List<Integer> positionMap = positions.get(position);
         this.cells[positionMap.get(0)][positionMap.get(1)] = symbol;
+    }
+
+    private boolean isMark(String position) {
+        List<Integer> positionMap = positions.get(position);
+        char symbol = this.cells[positionMap.get(0)][positionMap.get(1)];
+        return symbol == 'X' || symbol == 'O';
     }
 
     public char getCell(int x, int y) {
