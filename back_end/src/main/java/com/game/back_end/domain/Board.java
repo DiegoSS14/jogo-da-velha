@@ -1,5 +1,6 @@
 package com.game.back_end.domain;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +15,7 @@ import lombok.Getter;
 @Getter
 @Component
 public class Board {
-    private char[][] cells;
+    private String[][] cells;
     private Map<String, List<Integer>> positions;
 
     public Board() {
@@ -32,10 +33,10 @@ public class Board {
     }
 
     public void reset() {
-        cells = new char[3][3];
+        cells = new String[3][3];
         for (int linha = 0; linha < 3; linha++) {
             for (int coluna = 0; coluna < 3; coluna++) {
-                cells[linha][coluna] = '-';
+                cells[linha][coluna] = "";
             }
         }
     }
@@ -44,20 +45,18 @@ public class Board {
         return true;
     }
 
-    public String display() {
-        String table = "";
+    public List<String> display() {
+        List<String> table = new ArrayList<>();
 
-        for (char[] board : cells) {
+        for (String[] board : cells) {
             for (int i = 0; i < 3; i++) {
-                table += (" " + board[i] + " ");
+                table.addLast(String.valueOf(board[i]));
             }
-            table += "\n";
         }
-
         return table;
     }
 
-    public void placeMark(String position, char symbol) {
+    public void placeMark(String position, String symbol) {
         if (isMark(position)) {
             throw new BusinessException("Posição já ocupada");
         }
@@ -67,11 +66,11 @@ public class Board {
 
     private boolean isMark(String position) {
         List<Integer> positionMap = positions.get(position);
-        char symbol = this.cells[positionMap.get(0)][positionMap.get(1)];
-        return symbol == 'X' || symbol == 'O';
+        String symbol = this.cells[positionMap.get(0)][positionMap.get(1)];
+        return symbol == "X" || symbol == "O";
     }
 
-    public char getCell(int x, int y) {
+    public String getCell(int x, int y) {
         return this.cells[x][y];
     }
 }

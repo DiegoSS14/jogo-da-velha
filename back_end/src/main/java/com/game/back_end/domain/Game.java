@@ -26,7 +26,7 @@ public class Game {
         this.board = board;
     }
 
-    public void play(char symbol, String position) {
+    public void play(String symbol, String position) {
         if (player1 == null && player2 == null)
             throw new BusinessException("Defina os jogadores antes de jogar!");
         board.placeMark(position, symbol);

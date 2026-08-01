@@ -1,5 +1,7 @@
 package com.game.back_end.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,10 +34,7 @@ public class GameController {
     }
     
     @GetMapping("board")
-    public ResponseEntity<String> board() {
+    public ResponseEntity<List<String>> board() {
         return ResponseEntity.ok(game.getBoard().display());      
     }
-    
-    
-    
 }

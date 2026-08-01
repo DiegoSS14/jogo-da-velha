@@ -2,8 +2,8 @@ package com.game.back_end.domain;
 
 public class WinChecker {
 
-    public static boolean hasWinner(Board board, char symbol) {
-        char[][] cells = board.getCells();
+    public static boolean hasWinner(Board board, String symbol) {
+        String[][] cells = board.getCells();
 
         // Linhas
         for (int i = 0; i < 3; i++) {
