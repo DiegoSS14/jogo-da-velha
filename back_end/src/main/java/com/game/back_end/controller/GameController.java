@@ -26,12 +26,6 @@ public class GameController {
         this.game = game;
         game.setBoard(new Board());
     }
-
-    @PostMapping("start")
-    public String play(@RequestBody String entity) {
-        game.getBoard().getCells();       
-        return entity;
-    }
     
     @GetMapping("board")
     public ResponseEntity<List<String>> board() {
