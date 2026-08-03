@@ -1,3 +1,4 @@
+import type HasWinDTO from "./interfaces/HasWinDTO";
 import type PlayDTO from "./interfaces/PlayDTO";
 import type PlayersDTO from "./interfaces/PlayersDTO";
 
@@ -18,10 +19,13 @@ export async function hasMark(dto: PlayDTO) {
         body: JSON.stringify(dto)
     })
 
-    if(!response.ok) 
+    if(!response.ok)
         throw new Error(`Erro ao marcar posição: ${response.status}`)
 
-    return response.text()
+    const hasWin: HasWinDTO = await response.json() as HasWinDTO
+
+    console.log(hasWin)
+    return hasWin
 }
 
 export async function definePlayers(dto: PlayersDTO) {
@@ -31,7 +35,18 @@ export async function definePlayers(dto: PlayersDTO) {
     })
 
     if(!response.ok) 
-        throw new Error(`Erro ao marcar posição: ${response.status}`)
+        throw new Error(`Erro ao definir players: ${response.status}`)
+
+    return response.text()
+}
+
+export async function reset() {
+    const response = await fetch("http://localhost:8080/reset", {
+        method: "GET", headers: {"content-Type": "application/json"},
+    })
+
+    if(!response.ok)
+        throw new Error(`Erro ao resetar jogo: ${response.status}`)
 
     return response.text()
 }

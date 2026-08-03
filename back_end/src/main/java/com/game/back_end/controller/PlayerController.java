@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.game.back_end.controller.dto.HasWinDTO;
 import com.game.back_end.controller.dto.PlayDTO;
 import com.game.back_end.controller.dto.PlayersDTO;
 import com.game.back_end.domain.Game;
@@ -23,8 +24,8 @@ public class PlayerController {
 
     @PostMapping("/define")
     public ResponseEntity<String> defineNamePlayers(@RequestBody PlayersDTO dto) {
-        Player p1 = new Player('X', dto.nameP1());
-        Player p2 = new Player('O', dto.nameP2());
+        Player p1 = new Player("X", dto.nameP1());
+        Player p2 = new Player("O", dto.nameP2());
         game.setPlayer1(p1);
         game.setPlayer2(p2);
 
@@ -35,19 +36,27 @@ public class PlayerController {
     public ResponseEntity<String> showPlayers() {
         if (game.getPlayer1() != null && game.getPlayer2() != null) {
             return ResponseEntity.ok(
-                "Player 1: " + game.getPlayer1().getName() + " - Symbol" + game.getPlayer1().getSymbol() 
-                + " / Player 2: " + game.getPlayer2().getName() + " - Symbol: " + game.getPlayer2().getSymbol()
-            );
+                    "Player 1: " + game.getPlayer1().getName() + " - Symbol" + game.getPlayer1().getSymbol()
+                            + " / Player 2: " + game.getPlayer2().getName() + " - Symbol: "
+                            + game.getPlayer2().getSymbol());
         }
         return ResponseEntity.ok("Jogadores não definidos ainda...");
     }
-    
-@PostMapping("play")
-    public ResponseEntity<String> postMethodName(@RequestBody PlayDTO dto) {
+
+    @PostMapping("play")
+    public ResponseEntity<HasWinDTO> play(@RequestBody PlayDTO dto) {
+        HasWinDTO hasWin = new HasWinDTO();
         game.play(dto.symbol(), dto.position());
-        if (WinChecker.hasWinner(game.getBoard(), dto.symbol())) {
-            return ResponseEntity.ok("Você ganhou!!");
-        }
-        return ResponseEntity.ok("Jogada realizada!");
+        hasWin.setWin(WinChecker.hasWinner(game.getBoard(), dto.symbol()));
+
+        String nameWinner = "";
+
+        if (game.getPlayer1().getSymbol().equals(dto.symbol())) {
+            nameWinner = game.getPlayer1().getName();
+        } else nameWinner = game.getPlayer2().getName();
+        
+        hasWin.setWinner(nameWinner);
+        
+        return ResponseEntity.ok(hasWin);
     }
 }

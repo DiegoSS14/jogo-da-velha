@@ -13,6 +13,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Component
 public class Player {
-    private char symbol;
+    private String symbol;
     private String name;
 }

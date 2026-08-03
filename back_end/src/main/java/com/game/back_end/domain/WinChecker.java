@@ -7,33 +7,33 @@ public class WinChecker {
 
         // Linhas
         for (int i = 0; i < 3; i++) {
-            if (cells[i][0] == symbol
-                    && cells[i][1] == symbol
-                    && cells[i][2] == symbol) {
+            if (cells[i][0].equals(symbol)
+                    && cells[i][1].equals(symbol)
+                    && cells[i][2].equals(symbol)) {
                 return true;
             }
         }
 
         // Colunas
         for (int i = 0; i < 3; i++) {
-            if (cells[0][i] == symbol
-                    && cells[1][i] == symbol
-                    && cells[2][i] == symbol) {
+            if (cells[0][i].equals(symbol)
+                    && cells[1][i].equals(symbol)
+                    && cells[2][i].equals(symbol)) {
                 return true;
             }
         }
 
         // Diagonal Primária
-        if (cells[0][0] == symbol
-                && cells[1][1] == symbol
-                && cells[2][2] == symbol) {
+        if (cells[0][0].equals(symbol)
+                && cells[1][1].equals(symbol)
+                && cells[2][2].equals(symbol)) {
             return true;
         }
 
         // Diagonal Secundária
-        if (cells[0][2] == symbol
-                && cells[1][1] == symbol
-                && cells[2][0] == symbol) {
+        if (cells[0][2].equals(symbol)
+                && cells[1][1].equals(symbol)
+                && cells[2][0].equals(symbol)) {
             return true;
         }
 
