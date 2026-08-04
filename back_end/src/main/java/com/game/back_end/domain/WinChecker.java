@@ -2,7 +2,7 @@ package com.game.back_end.domain;
 
 public class WinChecker {
 
-    public static boolean hasWinner(Board board, String symbol) {
+    public static boolean check(Board board, String symbol) {
         String[][] cells = board.getCells();
 
         // Linhas

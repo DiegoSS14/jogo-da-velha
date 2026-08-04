@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class HasWinDTO {
     boolean win;
+    boolean tie;
     String winner;
 }

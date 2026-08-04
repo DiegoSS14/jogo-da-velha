@@ -12,6 +12,7 @@ import com.game.back_end.controller.dto.PlayDTO;
 import com.game.back_end.controller.dto.PlayersDTO;
 import com.game.back_end.domain.Game;
 import com.game.back_end.domain.Player;
+import com.game.back_end.domain.TieChecker;
 import com.game.back_end.domain.WinChecker;
 
 import lombok.RequiredArgsConstructor;
@@ -47,7 +48,8 @@ public class PlayerController {
     public ResponseEntity<HasWinDTO> play(@RequestBody PlayDTO dto) {
         HasWinDTO hasWin = new HasWinDTO();
         game.play(dto.symbol(), dto.position());
-        hasWin.setWin(WinChecker.hasWinner(game.getBoard(), dto.symbol()));
+        hasWin.setWin(WinChecker.check(game.getBoard(), dto.symbol()));
+        hasWin.setTie(TieChecker.check(game.getBoard()));
 
         String nameWinner = "";
 

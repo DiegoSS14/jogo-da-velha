@@ -13,7 +13,7 @@ function App() {
 
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [turn, setTurn] = useState<number>(1);
-  const [win, setWin] = useState<HasWinDTO>({ win: false, winner: "" });
+  const [win, setWin] = useState<HasWinDTO>({ win: false, tie: false, winner: "" });
 
   useEffect(() => {
     loadBoard()
@@ -62,12 +62,12 @@ function App() {
     reset()
     setIsPlaying(false)
     setTurn(1)
-    setWin({ win: false, winner: "" })
+    setWin({ win: false, tie: false, winner: "" })
     clearPlayers()
   }
 
   function revanche() {
-    setWin({ win: false, winner: "" })
+    setWin({ win: false, tie: false, winner: "" })
     reset()
     setTurn(1)
   }
@@ -77,9 +77,13 @@ function App() {
     setnameP2("")
   }
 
+  function tieChecker() {
+
+  }
+
   return (
     <div className='relative flex flex-col items-center justify-center min-h-screen p-6 bg-bg mx-auto'>
-      {win.win && (
+      {(win.tie == false && win.win == true) && (
         <section className='flex flex-col items-center justify-center gap-4 rounded-lg absolute'>
           <h1 className='text-4xl font-bold text-white'>{`${win.winner} você ganhou!`}</h1>
           <div className='w-full flex justify-center gap-2'>
@@ -94,7 +98,22 @@ function App() {
           </div>
         </section>
       )}
-      {!win.win && (
+      {(win.tie == true && win.win == false) && (
+        <section className='flex flex-col items-center justify-center gap-4 rounded-lg absolute'>
+          <h1 className='text-4xl font-bold text-white'>Empate!</h1>
+          <div className='w-full flex justify-center gap-2'>
+            <button
+              onClick={() => revanche()}
+              className='w-full bg-green-500 px-3 py-2 rounded-lg text-zinc-900 font-medium cursor-pointer'
+            >Revanche</button>
+            <button
+              onClick={() => resetSection()}
+              className='w-full bg-zinc-400 px-3 py-2 rounded-lg text-zinc-900 font-medium cursor-pointer'
+            >Reiniciar partida</button>
+          </div>
+        </section>
+      )}
+      {!(win.tie == true && win.win == true) && (
         <section className='flex flex-col gap-10 justify-center items-center w-full max-w-100'>
           <h1 className='text-4xl font-bold text-text-h'>Jogo da velha</h1>
 
