@@ -77,10 +77,6 @@ function App() {
     setnameP2("")
   }
 
-  function tieChecker() {
-
-  }
-
   return (
     <div className='relative flex flex-col items-center justify-center min-h-screen p-6 bg-bg mx-auto'>
       {(win.tie == false && win.win == true) && (

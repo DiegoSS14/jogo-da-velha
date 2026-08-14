@@ -1,53 +1,26 @@
+import TypeMethod from "./enums/TypeMethod";
+import TypeResponse from "./enums/TypeResponse";
 import type HasWinDTO from "./interfaces/HasWinDTO";
 import type PlayDTO from "./interfaces/PlayDTO";
 import type PlayersDTO from "./interfaces/PlayersDTO";
+import Request from "./Request";
+
+const request: Request = new Request("http://localhost:8080");
 
 export async function showBoard() {
-    const response = await fetch('http://localhost:8080/board', {
-        method: "GET", headers: {"content-Type": "application/json"}
-    })
-
-    if(!response.ok) 
-        throw new Error(`Erro ao buscar board ${response.status}`)
-
-    return response.json();
+    return request.endpoint({ route: 'board' })
 }
 
 export async function hasMark(dto: PlayDTO) {
-    const response = await fetch("http://localhost:8080/players/play", {
-        method: "POST", headers: {"content-Type": "application/json"},
-        body: JSON.stringify(dto)
-    })
-
-    if(!response.ok)
-        throw new Error(`Erro ao marcar posição: ${response.status}`)
-
-    const hasWin: HasWinDTO = await response.json() as HasWinDTO
-
-    console.log(hasWin)
+    const hasWin: HasWinDTO = request.endpoint({ route: 'players/play', method: TypeMethod.POST, errorMessage: 'Erro ao marcar posição', body: dto }) as any
     return hasWin
 }
 
 export async function definePlayers(dto: PlayersDTO) {
-    const response = await fetch("http://localhost:8080/players/define", {
-        method: "POST", headers: {"content-Type": "application/json"},
-        body: JSON.stringify(dto)
-    })
-
-    if(!response.ok) 
-        throw new Error(`Erro ao definir players: ${response.status}`)
-
-    return response.text()
+    return request.endpoint({ route: 'players/define', method: TypeMethod.POST, errorMessage: 'Erro ao definir players', typeResponse: TypeResponse.TEXT, body: dto})
 }
 
 export async function reset() {
-    const response = await fetch("http://localhost:8080/reset", {
-        method: "GET", headers: {"content-Type": "application/json"},
-    })
-
-    if(!response.ok)
-        throw new Error(`Erro ao resetar jogo: ${response.status}`)
-
-    return response.text()
+    return request.endpoint({ route: 'reset', typeResponse: TypeResponse.TEXT })
 }
 
