@@ -46,19 +46,6 @@ public class PlayerController {
 
     @PostMapping("play")
     public ResponseEntity<HasWinDTO> play(@RequestBody PlayDTO dto) {
-        HasWinDTO hasWin = new HasWinDTO();
-        game.play(dto.symbol(), dto.position());
-        hasWin.setWin(WinChecker.check(game.getBoard(), dto.symbol()));
-        hasWin.setTie(TieChecker.check(game.getBoard()));
-
-        String nameWinner = "";
-
-        if (game.getPlayer1().getSymbol().equals(dto.symbol())) {
-            nameWinner = game.getPlayer1().getName();
-        } else nameWinner = game.getPlayer2().getName();
-        
-        hasWin.setWinner(nameWinner);
-        
-        return ResponseEntity.ok(hasWin);
+        return ResponseEntity.ok(game.play(dto.position()));
     }
 }
