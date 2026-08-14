@@ -12,7 +12,6 @@ function App() {
   const [nameP2, setnameP2] = useState<string>("");
 
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [turn, setTurn] = useState<number>(1);
   const [win, setWin] = useState<HasWinDTO>({ win: false, tie: false, winner: "" });
 
   useEffect(() => {
@@ -32,17 +31,9 @@ function App() {
     }
   }
 
-  async function markPosition(position: string) {
-    const play: PlayDTO = { symbol: "", position }
-    if (turn == 1) {
-      play.symbol = "X"
+  async function markPosition(position: number) {
+    const play: PlayDTO = {position: position+""}
       setWin((await hasMark(play)))
-      setTurn(2)
-    } else {
-      play.symbol = "O"
-      setWin((await hasMark(play)))
-      setTurn(1)
-    }
   }
 
   async function setPlayers() {
@@ -61,7 +52,6 @@ function App() {
   function resetSection() {
     reset()
     setIsPlaying(false)
-    setTurn(1)
     setWin({ win: false, tie: false, winner: "" })
     clearPlayers()
   }
@@ -69,7 +59,6 @@ function App() {
   function revanche() {
     setWin({ win: false, tie: false, winner: "" })
     reset()
-    setTurn(1)
   }
 
   function clearPlayers() {
@@ -138,7 +127,7 @@ function App() {
             <div className='grid grid-cols-3 gap-1 p-1 w-100 h-100 rounded-lg items-center justify-center'>
               {board?.map((cel, index) => (
                 <div
-                  onClick={() => markPosition(`${index + 1}`)}
+                  onClick={() => markPosition(index + 1)}
                   className='w-full h-full p-4 flex items-center justify-center bg-zinc-800/40 rounded-md hover:bg-accent/10 transition-all cursor-pointer'
                   id={cel + index} key={index}>
                   <span className='text-5xl font-medium text-white/30'>{cel}</span>
