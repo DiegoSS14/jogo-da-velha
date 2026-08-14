@@ -4,7 +4,7 @@ const TypeMethod = {
     PUT: "PUT",
     PATCH: "PATCH",
     DELETE: "DELETE",
-    OPTION: "OPTION",
+    OPTIONS: "OPTIONS",
 } as const;
 
 type TypeMethod = typeof TypeMethod[keyof typeof TypeMethod];
