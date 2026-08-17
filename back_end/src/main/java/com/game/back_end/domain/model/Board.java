@@ -1,4 +1,4 @@
-package com.game.back_end.domain;
+package com.game.back_end.domain.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.game.back_end.exception.BusinessException;
+import com.game.back_end.exception.models.BusinessException;
 
 import lombok.Getter;
 

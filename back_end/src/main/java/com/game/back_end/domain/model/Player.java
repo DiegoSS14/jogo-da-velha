@@ -1,4 +1,4 @@
-package com.game.back_end.domain;
+package com.game.back_end.domain.model;
 
 import org.springframework.stereotype.Component;
 

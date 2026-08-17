@@ -1,9 +1,9 @@
-package com.game.back_end.domain;
+package com.game.back_end.domain.model;
 
 import org.springframework.stereotype.Component;
 
 import com.game.back_end.controller.dto.HasWinDTO;
-import com.game.back_end.exception.BusinessException;
+import com.game.back_end.exception.models.BusinessException;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

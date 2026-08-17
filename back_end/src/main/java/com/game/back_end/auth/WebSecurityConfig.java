@@ -2,7 +2,6 @@ package com.game.back_end.auth;
 
 import java.util.List;
 
-import org.springframework.boot.security.autoconfigure.SecurityProperties.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -10,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,15 +30,11 @@ public class WebSecurityConfig {
         http
             .cors(Customizer.withDefaults())
             .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(requests -> {
-                requests.requestMatchers("/**").permitAll()
-                        .requestMatchers("/login", "/error").permitAll()
-                        .requestMatchers("/board", "/reset").permitAll()
-                        .anyRequest().authenticated();
-            }).formLogin(form -> form
-                    .loginPage("/login")
-                    .permitAll())
-            .logout(LogoutConfigurer::permitAll);
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/login", "/error", "/css/**", "/js/**").permitAll()
+                .requestMatchers("/board", "/reset").authenticated()
+                .anyRequest().authenticated()
+            ).httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
@@ -50,9 +46,12 @@ public class WebSecurityConfig {
 
     @Bean
     UserDetailsService userDetailsService(PasswordEncoder encoder) {
-        String password = encoder.encode("password");
-        UserDetails user = org.springframework.security.core.userdetails.User.withUsername("user").password(password)
-                .roles("USER").build();
+        String password = encoder.encode("root");
+        UserDetails user = User.withUsername("root")
+                .password(password)
+                .roles("USER")
+                .build();
+
         return new InMemoryUserDetailsManager(user);
     }
 

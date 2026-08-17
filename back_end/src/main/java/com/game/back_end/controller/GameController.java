@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.game.back_end.domain.Board;
-import com.game.back_end.domain.Game;
+import com.game.back_end.domain.model.Board;
+import com.game.back_end.domain.model.Game;
 
 @RestController
 @RequestMapping("/")

@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.game.back_end.controller.dto.HasWinDTO;
 import com.game.back_end.controller.dto.PlayDTO;
 import com.game.back_end.controller.dto.PlayersDTO;
-import com.game.back_end.domain.Game;
-import com.game.back_end.domain.Player;
-import com.game.back_end.domain.TieChecker;
-import com.game.back_end.domain.WinChecker;
+import com.game.back_end.domain.model.Game;
+import com.game.back_end.domain.model.Player;
+import com.game.back_end.domain.model.TieChecker;
+import com.game.back_end.domain.model.WinChecker;
 
 import lombok.RequiredArgsConstructor;
 
