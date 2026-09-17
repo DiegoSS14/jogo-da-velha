@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "auth"
+		},
+		{
+			"path": "back_end"
+		},
+		{
+			"path": "front_end"
+		}
+	],
+	"settings": {}
+}
