@@ -1,5 +1,6 @@
 package com.auth;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.context.annotation.Bean;
@@ -25,99 +26,149 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    @Order(1)
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                // Configura Oauth2
-                .oauth2AuthorizationServer(authorizationServer -> {
-                    http.securityMatcher(authorizationServer.getEndpointsMatcher());
-                    authorizationServer.oidc(Customizer.withDefaults());
-                })
-                .authorizeHttpRequests(authz -> authz.anyRequest().authenticated())
-                // Configura redirecionamento de excessões
-                .exceptionHandling(exceptions -> exceptions
-                        .defaultAuthenticationEntryPointFor(new LoginUrlAuthenticationEntryPoint("/login"),
-                                new MediaTypeRequestMatcher(MediaType.TEXT_HTML)));
-        // .oauth2Login(Customizer.withDefaults());
+        @Bean
+        @Order(1)
+        SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+                http
+                                // Configura Oauth2
+                                .oauth2AuthorizationServer(authorizationServer -> {
+                                        http.securityMatcher(authorizationServer.getEndpointsMatcher());
+                                        authorizationServer.oidc(Customizer.withDefaults());
+                                })
+                                .authorizeHttpRequests(authz -> authz.anyRequest().authenticated())
+                                // Configura redirecionamento de excessões
+                                .exceptionHandling(exceptions -> exceptions
+                                                .defaultAuthenticationEntryPointFor(
+                                                                new LoginUrlAuthenticationEntryPoint("/login"),
+                                                                new MediaTypeRequestMatcher(MediaType.TEXT_HTML)))
+                                // .oauth2Login(Customizer.withDefaults());
+                                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
-        return http.build();
-    }
+                return http.build();
+        }
 
-    @Bean
-    @Order(2)
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authz -> authz
-                .requestMatchers("/login", "/css/**", "/js/**").permitAll()
-                .anyRequest().authenticated())
-                .formLogin(Customizer.withDefaults()); // Deve ser utilizado somente se você quiser ter a interface
-                                                       // gráfica padrão do Spring e deve ser removido o oauth2Login()
-                                                       // se não dá conflito
+        @Bean
+        @Order(2)
+        SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+                http.authorizeHttpRequests(authz -> authz
+                                .requestMatchers(
+                                                "/login",
+                                                "/error",
+                                                "/.well-known/appspecific/**",
+                                                "/css/**",
+                                                "/js/**",
+                                                "/images/**",
+                                                "/favicon.ico")
+                                .permitAll()
+                                .anyRequest().authenticated())
+                                // .formLogin(Customizer.withDefaults()) // Ativa página de login padrão do
+                                // Spring
+                                .formLogin(form -> form
+                                                .loginPage("/login")
+                                                .permitAll()) // Ativa página de login personalizada definida pelo
+                                                              // usuário
+                                                              // gráfica padrão do Spring e deve ser removido o
+                                                              // oauth2Login()
+                                                              // se não dá conflito
+                                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
-        return http.build();
-    }
+                return http.build();
+        }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails diego = User.withUsername("diego")
-                .password(passwordEncoder().encode("123"))
-                .roles("USER")
-                .build();
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
+                CorsConfiguration config = new CorsConfiguration();
+                config.setAllowedOrigins(List.of("http://localhost:5173"));
+                config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                config.setAllowedHeaders(List.of("*"));
+                config.setAllowCredentials(true);
 
-        UserDetails kellen = User.withUsername("kellen")
-                .password(passwordEncoder().encode("123"))
-                .roles("USER")
-                .build();
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", config);
+                return source;
+        }
 
-        return new InMemoryUserDetailsManager(diego, kellen);
-    }
+        @Bean
+        public UserDetailsService userDetailsService() {
+                UserDetails diego = User.withUsername("diego")
+                                .password(passwordEncoder().encode("123"))
+                                .roles("USER")
+                                .build();
 
-    @Bean
-    RegisteredClientRepository registeredClientRepository() {
-        RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("oidcClient")
-                .clientSecret("{noop}secret")
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("http://127.0.0.1:8080/")
-                .postLogoutRedirectUri("http://127.0.0.1:8080/login")
-                .scope(OidcScopes.OPENID)
-                .scope(OidcScopes.PROFILE)
-                .clientSettings(
-                        ClientSettings.builder()
-                                .requireAuthorizationConsent(false)
-                                .build())
-                .build();
+                UserDetails kellen = User.withUsername("kellen")
+                                .password(passwordEncoder().encode("123"))
+                                .roles("USER")
+                                .build();
 
-        // Client criado para testar a aplicação em Desenvolvimento
-        RegisteredClient brunoClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("bruno")
-                .clientAuthenticationMethod(
-                        ClientAuthenticationMethod.NONE)
-                .authorizationGrantType(
-                        AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationGrantType(
-                        AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("https://oauth.usebruno.com/vscode/callback")
-                .scope(OidcScopes.OPENID)
-                .scope(OidcScopes.PROFILE)
-                .clientSettings(
-                        ClientSettings.builder()
-                                .requireAuthorizationConsent(false)
-                                .build())
-                .build();
+                return new InMemoryUserDetailsManager(diego, kellen);
+        }
 
-        return new InMemoryRegisteredClientRepository(oidcClient, brunoClient);
-    }
+        @Bean
+        RegisteredClientRepository registeredClientRepository() {
+                RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
+                                .clientId("oidcClient")
+                                .clientSecret("{noop}secret")
+                                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                                .redirectUri("http://127.0.0.1:8080")
+                                .postLogoutRedirectUri("http://127.0.0.1:8080/login")
+                                .scope(OidcScopes.OPENID)
+                                .scope(OidcScopes.PROFILE)
+                                .clientSettings(
+                                                ClientSettings.builder()
+                                                                .requireAuthorizationConsent(false)
+                                                                .build())
+                                .build();
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+                // Client criado para o front-end
+                RegisteredClient reactClient = RegisteredClient.withId(UUID.randomUUID().toString())
+                                .clientId("reactJogoDaVelha")
+                                .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
+                                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                                .redirectUri("http://localhost:5173")
+                                .postLogoutRedirectUri("http://localhost:5173/login")
+                                .scope(OidcScopes.OPENID)
+                                .scope(OidcScopes.PROFILE)
+                                .clientSettings(
+                                                ClientSettings.builder()
+                                                                .requireAuthorizationConsent(false)
+                                                                .requireProofKey(true)
+                                                                .build())
+                                .build();
+
+                // Client criado para testar a aplicação em Desenvolvimento
+                RegisteredClient brunoClient = RegisteredClient.withId(UUID.randomUUID().toString())
+                                .clientId("bruno")
+                                .clientAuthenticationMethod(
+                                                ClientAuthenticationMethod.NONE)
+                                .authorizationGrantType(
+                                                AuthorizationGrantType.AUTHORIZATION_CODE)
+                                .authorizationGrantType(
+                                                AuthorizationGrantType.REFRESH_TOKEN)
+                                .redirectUri("https://oauth.usebruno.com/vscode/callback")
+                                .scope(OidcScopes.OPENID)
+                                .scope(OidcScopes.PROFILE)
+                                .clientSettings(
+                                                ClientSettings.builder()
+                                                                .requireAuthorizationConsent(false)
+                                                                .build())
+                                .build();
+
+                return new InMemoryRegisteredClientRepository(oidcClient, brunoClient, reactClient);
+        }
+
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 }
