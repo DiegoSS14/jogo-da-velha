@@ -10,5 +10,7 @@
 			"path": "front_end"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"java.configuration.updateBuildConfiguration": "interactive"
+	}
 }
