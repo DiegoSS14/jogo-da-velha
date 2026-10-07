@@ -1,5 +1,7 @@
 package com.game.back_end.security;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,26 +18,41 @@ import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-@Configuration 
-@EnableWebSecurity 
+@Configuration
+@EnableWebSecurity
 public class WebConfigSecurity {
 
     @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
     private String issuerUri;
 
-    @Bean 
+    @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .httpBasic(Customizer.withDefaults())
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/board", "/reset").permitAll()
-                .anyRequest().authenticated()
-            )
-            .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+                .cors(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/board").permitAll()
+                        .anyRequest().authenticated())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
     @Bean
@@ -53,15 +70,15 @@ public class WebConfigSecurity {
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails diego = User.withUsername("diego")
-            .password(passwordEncoder().encode("123"))
-            .roles("USER")
-            .build();
+                .password(passwordEncoder().encode("123"))
+                .roles("USER")
+                .build();
 
         UserDetails kellen = User.withUsername("kellen")
-            .password(passwordEncoder().encode("123"))
-            .roles("USER")
-            .build();
-            
+                .password(passwordEncoder().encode("123"))
+                .roles("USER")
+                .build();
+
         return new InMemoryUserDetailsManager(diego, kellen);
     }
 
