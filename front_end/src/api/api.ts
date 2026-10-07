@@ -6,12 +6,16 @@ import Request from "./Request";
 
 const request: Request = new Request("http://localhost:8080");
 
+export function setAccessToken(token?: string) {
+    request.setAccessToken(token);
+}
+
 export async function showBoard() {
     return request.get({ route: 'board' })
 }
 
 export async function hasMark(dto: PlayDTO) {
-    const hasWin: HasWinDTO = request.post({ route: 'players/play', errorMessage: 'Erro ao marcar posição', body: dto }) as any
+    const hasWin: HasWinDTO = await request.post({ route: 'players/play', errorMessage: 'Erro ao marcar posição', body: dto }) as HasWinDTO
     return hasWin
 }
 

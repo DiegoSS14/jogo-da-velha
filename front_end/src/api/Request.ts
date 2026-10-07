@@ -4,24 +4,38 @@ import type EndpointDTO from "./interfaces/EndpointDTO";
 
 export default class Request {
     private baseUrl: string;
+    private accessToken: string | undefined;
 
     constructor(baseUrl: string) {
         this.baseUrl = baseUrl;
     }
 
+    public setAccessToken(accessToken?: string) {
+        this.accessToken = accessToken;
+    }
+
     private async endpoint(dto: EndpointDTO) {
         let response;
-        
+
+        const headers: HeadersInit = {
+            "Content-Type": "application/json"
+        };
+
+        // SE EXISTIR TOKEN, ENVIA COMO BEARER
+        if (this.accessToken) {
+            headers["Authorization"] = `Bearer ${this.accessToken}`;
+        }
+
         if (dto.body != null && dto.body != undefined) {
             response = await fetch(`${this.baseUrl}/${dto.route}`, {
-                method: dto.method || "GET", headers: 
-                { "content-Type": "application/json" },
+                method: dto.method || "GET", headers:
+                    headers,
                 body: JSON.stringify(dto.body)
             })
         } else {
             response = await fetch(`${this.baseUrl}/${dto.route}`, {
-                method: dto.method || "GET", headers: 
-                { "content-Type": "application/json" }
+                method: dto.method || "GET", headers:
+                    headers
             })
         }
 
