@@ -1,2 +1,4 @@
 /target
 .github
+auth.code-workspace
+front_end/package-lock.json

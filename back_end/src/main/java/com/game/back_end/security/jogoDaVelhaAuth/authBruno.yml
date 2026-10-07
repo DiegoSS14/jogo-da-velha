@@ -1,0 +1,29 @@
+info:
+  name: authBruno
+  type: http
+
+http:
+  method: POST
+  url: http://127.0.0.1:8081/oauth2/authorize
+  auth:
+    type: oauth2
+    flow: authorization_code
+    authorizationUrl: http://127.0.0.1:8081/oauth2/authorize
+    accessTokenUrl: http://127.0.0.1:8081/oauth2/token
+    credentials:
+      clientId: bruno
+      placement: body
+    scope: openid profile
+    state: bruno-test
+    pkce: {}
+    tokenConfig:
+      id: credentials
+      placement:
+        header: Bearer
+      source: access_token
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

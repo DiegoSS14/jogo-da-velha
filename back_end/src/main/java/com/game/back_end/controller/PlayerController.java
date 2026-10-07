@@ -12,8 +12,6 @@ import com.game.back_end.controller.dto.PlayDTO;
 import com.game.back_end.controller.dto.PlayersDTO;
 import com.game.back_end.domain.Game;
 import com.game.back_end.domain.Player;
-import com.game.back_end.domain.TieChecker;
-import com.game.back_end.domain.WinChecker;
 
 import lombok.RequiredArgsConstructor;
 
